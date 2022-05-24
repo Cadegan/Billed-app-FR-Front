@@ -47,6 +47,11 @@ export default ({ data: bills, loading, error }) => {
   } else if (error) {
     return ErrorPage(error)
   }
+
+  // const antiChrono = (a, b) => ((a < b) ? 1 : -1)
+  // const datesSorted = [...data].sort(antiChrono)
+
+  console.log('rows', rows(bills))
   
   return (`
     <div class='layout'>
