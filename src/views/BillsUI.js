@@ -19,7 +19,22 @@ const row = (bill) => {
     `;
 };
 
+  // const antiChrono = (a, b) => ((a < b) ? 1 : -1)
+  // const antiChroneNew = arr.sort((a, b) => a.date - b.date);
+  // const datesSorted = [...data].sort(antiChrono)
+
+  // const arr = [...data]
+  // const sortByDate = arr => {
+  //   const sorter = (a, b) => {
+  //     return new Date(a.date).getTime() - new Date(b.date).getTime();
+  //   }
+  //   arr.sort(sorter);
+  // };
+
 const rows = (data) => {
+  //Formater les dates en "ISO8601" (?)
+  //Trier les dates
+  
   return data && data.length ? data.map((bill) => row(bill)).join("") : "";
 };
 
@@ -46,17 +61,6 @@ export default ({ data: bills, loading, error }) => {
   } else if (error) {
     return ErrorPage(error);
   }
-
-  // const antiChrono = (a, b) => ((a < b) ? 1 : -1)
-  // const datesSorted = [...data].sort(antiChrono)
-
-  // const arr = [...data]
-  // const sortByDate = arr => {
-  //   const sorter = (a, b) => {
-  //     return new Date(a.date).getTime() - new Date(b.date).getTime();
-  //   }
-  //   arr.sort(sorter);
-  // };
 
   console.log("rows", rows(bills));
 
