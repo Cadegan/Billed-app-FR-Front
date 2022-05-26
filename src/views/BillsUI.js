@@ -20,10 +20,13 @@ const row = (bill) => {
 };
 
   // const antiChrono = (a, b) => ((a < b) ? 1 : -1)
-  // const antiChroneNew = arr.sort((a, b) => a.date - b.date);
-  // const datesSorted = [...data].sort(antiChrono)
 
-  // const arr = [...data]
+  // const antiChroneVtwo = arr.sort((a, b) => a.date - b.date);
+  // const antiChroneVthree = (a, b) => ((a.date < b.date) ? 1 : -1)
+
+  // const datesSorted = [...bills].sort(antiChrono)
+
+  // const arr = [...bills]
   // const sortByDate = arr => {
   //   const sorter = (a, b) => {
   //     return new Date(a.date).getTime() - new Date(b.date).getTime();
@@ -33,8 +36,11 @@ const row = (bill) => {
 
 const rows = (data) => {
   //Formater les dates en "ISO8601" (?)
+  //Si données corrompues, les filtrer
+  // : Est-ce necessaire? getBills() formate par defaut les dates au cas ou?
   //Trier les dates
-  
+  //return dataSorted.map((bill) => row(bill)).join("")
+
   return data && data.length ? data.map((bill) => row(bill)).join("") : "";
 };
 
