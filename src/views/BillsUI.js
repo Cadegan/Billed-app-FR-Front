@@ -9,7 +9,7 @@ const row = (bill) => {
     <tr>
       <td>${bill.type}</td>
       <td>${bill.name}</td>
-      <td>${bill.date}</td>
+      <td>${bill.hasOwnProperty("formatDate") ? bill.formatDate : bill.date}</td>
       <td>${bill.amount} €</td>
       <td>${bill.status}</td>
       <td>
@@ -35,14 +35,28 @@ const row = (bill) => {
   // };
 
 const rows = (data) => {
+    const billsAntiChronoSorted = data.filter(isDateValidated).sort(antiChrono);
+    return data && data.length ? billsAntiChronoSorted.map((bill) => row(bill).join("")) : "";
+  
   //Formater les dates en "ISO8601" (?)
   //Si données corrompues, les filtrer
   // : Est-ce necessaire? getBills() formate par defaut les dates au cas ou?
   //Trier les dates
-  //return dataSorted.map((bill) => row(bill)).join("")
+  //const sortByDate = data.sort(antiChrono)
+  //return sortByDate.map((bill) => row(bill)).join("")
+  
 
-  return data && data.length ? data.map((bill) => row(bill)).join("") : "";
+  // return data && data.length ? data.map((bill) => row(bill)).join("") : "";
 };
+
+const isDateValidated = (bill) => bill.date === null ? false : true;
+
+const antiChrono = (a, b) => {
+  const aDate = a.hasOwnProperty("formatDate") ? a.formatDate : a.date;
+  const bDate = b.hasOwnProperty("formatDate") ? b.formatDate : b.date;
+
+  return (aDate < bDate ? 1 : -1)
+}
 
 export default ({ data: bills, loading, error }) => {
   const modal = () => `
