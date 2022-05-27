@@ -27,26 +27,10 @@ const antiChrono = (a, b) => {
   const aDate = a.hasOwnProperty("formatIso") ? a.formatIso : a.date;
   const bDate = b.hasOwnProperty("formatIso") ? b.formatIso : b.date;
 
-  return aDate < bDate ? 1 : aDate > bDate ? -1 : 0;
+  return aDate < bDate ? 1 : -1;
 };
 
-// const antiChrono = (a, b) => ((a < b) ? 1 : -1)
-
-// const antiChroneVtwo = arr.sort((a, b) => a.date - b.date);
-// const antiChroneVthree = (a, b) => ((a.date < b.date) ? 1 : -1)
-
-// const datesSorted = [...bills].sort(antiChrono)
-
-// const arr = [...bills]
-// const sortByDate = arr => {
-//   const sorter = (a, b) => {
-//     return new Date(a.date).getTime() - new Date(b.date).getTime();
-//   }
-//   arr.sort(sorter);
-// };
-
 const rows = (data) => {
-  // return data && data.length ? data.map((bill) => row(bill)).join("") : "";
 
   if (data && data.length) {
     const billsAntiChronoSorted = data.filter(isDateValidated).sort(antiChrono);
@@ -55,14 +39,9 @@ const rows = (data) => {
     return "";
   }
 
-  //Formater les dates en "ISO8601" (?)
-  //Si données corrompues, les filtrer
-  // : Est-ce necessaire? getBills() formate par defaut les dates au cas ou?
-  //Trier les dates
-  //const sortByDate = data.sort(antiChrono)
-  //return sortByDate.map((bill) => row(bill)).join("")
-
-  // return data && data.length ? data.map((bill) => row(bill)).join("") : "";
+  // return data && data.length
+  //   ? billsAntiChronoSorted.map((bill) => row(bill)).join("")
+  //   : "";
 };
 
 export default ({ data: bills, loading, error }) => {
@@ -89,7 +68,7 @@ export default ({ data: bills, loading, error }) => {
     return ErrorPage(error);
   }
 
-  console.log("rows", rows(bills));
+  // console.log("rows", rows(bills));
 
   return `
     <div class='layout'>
