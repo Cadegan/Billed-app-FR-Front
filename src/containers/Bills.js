@@ -1,5 +1,5 @@
 import { ROUTES_PATH } from "../constants/routes.js";
-import { formatDate, formatStatus } from "../app/format.js";
+import { formatDate, formatDateIso, formatStatus } from "../app/format.js";
 import Logout from "./Logout.js";
 
 export default class {
@@ -45,6 +45,7 @@ export default class {
             try {
               return {
                 ...doc,
+                formatIso: formatDateIso(doc.date),
                 formatDate: formatDate(doc.date),
                 status: formatStatus(doc.status),
               };

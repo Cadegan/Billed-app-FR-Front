@@ -7,6 +7,10 @@ export const formatDate = (dateStr) => {
   return `${parseInt(da)} ${month.substr(0, 3)}. ${ye.toString().substr(2, 4)}`;
 };
 
+export const formatDateIso = (dateStr) => {
+  return new Date(dateStr).toISOString();
+};
+
 export const formatStatus = (status) => {
   switch (status) {
     case "pending":

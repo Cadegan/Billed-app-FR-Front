@@ -9,7 +9,9 @@ const row = (bill) => {
     <tr>
       <td>${bill.type}</td>
       <td>${bill.name}</td>
-      <td>${bill.hasOwnProperty("formatDate") ? bill.formatDate : bill.date}</td>
+      <td>${
+        bill.hasOwnProperty("formatDate") ? bill.formatDate : bill.date
+      }</td>
       <td>${bill.amount} €</td>
       <td>${bill.status}</td>
       <td>
@@ -19,44 +21,49 @@ const row = (bill) => {
     `;
 };
 
-  // const antiChrono = (a, b) => ((a < b) ? 1 : -1)
+const isDateValidated = (bill) => (bill.date === null ? false : true);
 
-  // const antiChroneVtwo = arr.sort((a, b) => a.date - b.date);
-  // const antiChroneVthree = (a, b) => ((a.date < b.date) ? 1 : -1)
+const antiChrono = (a, b) => {
+  const aDate = a.hasOwnProperty("formatIso") ? a.formatIso : a.date;
+  const bDate = b.hasOwnProperty("formatIso") ? b.formatIso : b.date;
 
-  // const datesSorted = [...bills].sort(antiChrono)
+  return aDate < bDate ? 1 : aDate > bDate ? -1 : 0;
+};
 
-  // const arr = [...bills]
-  // const sortByDate = arr => {
-  //   const sorter = (a, b) => {
-  //     return new Date(a.date).getTime() - new Date(b.date).getTime();
-  //   }
-  //   arr.sort(sorter);
-  // };
+// const antiChrono = (a, b) => ((a < b) ? 1 : -1)
+
+// const antiChroneVtwo = arr.sort((a, b) => a.date - b.date);
+// const antiChroneVthree = (a, b) => ((a.date < b.date) ? 1 : -1)
+
+// const datesSorted = [...bills].sort(antiChrono)
+
+// const arr = [...bills]
+// const sortByDate = arr => {
+//   const sorter = (a, b) => {
+//     return new Date(a.date).getTime() - new Date(b.date).getTime();
+//   }
+//   arr.sort(sorter);
+// };
 
 const rows = (data) => {
+  // return data && data.length ? data.map((bill) => row(bill)).join("") : "";
+
+  if (data && data.length) {
     const billsAntiChronoSorted = data.filter(isDateValidated).sort(antiChrono);
-    return data && data.length ? billsAntiChronoSorted.map((bill) => row(bill).join("")) : "";
-  
+    return billsAntiChronoSorted.map((bill) => row(bill)).join("");
+  } else {
+    return "";
+  }
+
   //Formater les dates en "ISO8601" (?)
   //Si données corrompues, les filtrer
   // : Est-ce necessaire? getBills() formate par defaut les dates au cas ou?
   //Trier les dates
   //const sortByDate = data.sort(antiChrono)
   //return sortByDate.map((bill) => row(bill)).join("")
-  
 
   // return data && data.length ? data.map((bill) => row(bill)).join("") : "";
 };
-
-const isDateValidated = (bill) => bill.date === null ? false : true;
-
-const antiChrono = (a, b) => {
-  const aDate = a.hasOwnProperty("formatDate") ? a.formatDate : a.date;
-  const bDate = b.hasOwnProperty("formatDate") ? b.formatDate : b.date;
-
-  return (aDate < bDate ? 1 : -1)
-}
 
 export default ({ data: bills, loading, error }) => {
   const modal = () => `
