@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 module.exports = {
     "env": {
         "browser": true,
@@ -5,6 +6,7 @@ module.exports = {
     },
     "extends": "eslint:recommended",
     "parserOptions": {
+        "sourceType": "module",
         "ecmaVersion": "latest"
     },
     "rules": {

@@ -31,7 +31,6 @@ const antiChrono = (a, b) => {
 };
 
 const rows = (data) => {
-
   if (data && data.length) {
     const billsAntiChronoSorted = data.filter(isDateValidated).sort(antiChrono);
     return billsAntiChronoSorted.map((bill) => row(bill)).join("");
