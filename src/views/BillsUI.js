@@ -10,7 +10,9 @@ const row = (bill) => {
       <td>${bill.type}</td>
       <td>${bill.name}</td>
       <td>${
-        bill.hasOwnProperty("formatDate") ? bill.formatDate : bill.date
+        Object.prototype.hasOwnProperty.call(bill, "formatDate")
+          ? bill.formatDate
+          : bill.date
       }</td>
       <td>${bill.amount} €</td>
       <td>${bill.status}</td>
@@ -24,8 +26,12 @@ const row = (bill) => {
 const isDateValidated = (bill) => (bill.date === null ? false : true);
 
 const antiChrono = (a, b) => {
-  const aDate = a.hasOwnProperty("formatIso") ? a.formatIso : a.date;
-  const bDate = b.hasOwnProperty("formatIso") ? b.formatIso : b.date;
+  const aDate = Object.prototype.hasOwnProperty.call(a, "formatIso")
+    ? a.formatIso
+    : a.date;
+  const bDate = Object.prototype.hasOwnProperty.call(b, "formatIso")
+    ? b.formatIso
+    : b.date;
 
   return aDate < bDate ? 1 : -1;
 };
