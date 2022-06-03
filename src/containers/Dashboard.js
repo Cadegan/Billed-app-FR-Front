@@ -141,7 +141,7 @@ export default class {
 
   handleShowTickets(e, bills, index) {
     if (this.counter === undefined || this.index !== index) this.counter = 0; //Si counter est undefined ou l'index ne correspond pas -> counter = 0 (supprime la liste)
-    if (this.index === undefined || this.index !== index) this.index = index; //Attribut un numéro
+    if (this.index === undefined || this.index !== index) this.index = index;
     if (this.counter % 2 === 0) {//Affiche la liste cible
       $(`#arrow-icon${this.index}`).css({ transform: "rotate(0deg)" });
       $(`#status-bills-container${this.index}`).html(
