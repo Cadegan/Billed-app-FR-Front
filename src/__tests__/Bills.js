@@ -2,12 +2,13 @@
 /**
  * @jest-environment jsdom
  */
-
+import userEvent from "@testing-library/user-event";
 import { screen, waitFor } from "@testing-library/dom";
 import BillsUI from "../views/BillsUI.js";
 import { bills } from "../fixtures/bills.js";
-import { ROUTES_PATH } from "../constants/routes.js";
+import { ROUTES_PATH, ROUTES } from "../constants/routes.js";
 import { localStorageMock } from "../__mocks__/localStorage.js";
+import Bills from "../containers/Bills.js";
 
 import router from "../app/Router.js";
 
@@ -45,9 +46,38 @@ describe("Given I am connected as an employee", () => {
       expect(dates).toEqual(datesSorted);
     });
   });
+  //Test buttonNewBill
+  describe("When I'm employee, on Bills Page and click on the new bill button", () => {
+    test("A new form bill container open", async () => {
+      Object.defineProperty(window, "localStorage", {
+        value: localStorageMock,
+      });
+      window.localStorage.setItem(
+        "user",
+        JSON.stringify({
+          type: "Employee", //Déclare l'user comme employé dans le "localStorage"
+        })
+      );
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname }); //Recupère l'url de l'employé
+      };
+      const newBill = new Bills({
+        document,
+        onNavigate,
+      });
+      const handleClickNewBill = jest.fn(
+        () =>
+          //jest.fn crée directement une fonction mock
+          newBill.handleClickNewBill
+      );
+      const button = screen.getByTestId("btn-new-bill");
+      button.addEventListener("click", handleClickNewBill);
+      userEvent.click(button); //Simule le click de l'utilisateur et lance la fonction handleClickNewBill
+      expect(handleClickNewBill).toHaveBeenCalled();
+      expect(screen.getByText("Envoyer une note de frais")); //Contrôle si la nouvelle note de frais est affichée
+    });
+  });
 });
-
-//buttonNewBill
 
 //handleClickIconEye
 
