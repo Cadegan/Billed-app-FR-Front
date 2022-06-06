@@ -9,6 +9,7 @@ import { bills } from "../fixtures/bills.js";
 import { ROUTES_PATH, ROUTES } from "../constants/routes.js";
 import { localStorageMock } from "../__mocks__/localStorage.js";
 import Bills from "../containers/Bills.js";
+import mockStore from "../__mocks__/store";
 
 import router from "../app/Router.js";
 
@@ -81,7 +82,7 @@ describe("Given I am connected as an employee", () => {
   //handleClickIconEye
   describe("Given I am connected as Employee and I am on Dashboard page and I clicked on a bill", () => {
     describe("When I click on the icon eye", () => {
-      test("A modal should open", async () => {
+      test("Then a modal should open", async () => {
         Object.defineProperty(window, "localStorage", {
           value: localStorageMock,
         });
@@ -121,4 +122,55 @@ describe("Given I am connected as an employee", () => {
   });
 });
 
-//getBills(Date's format?)
+//getBills
+// Describe("Given I am connected as Employee", () => {
+//   Describe("When I'm on Bills Page", () => {
+//     test("Then, all bills should be showed", async () => {
+//       // Object.defineProperty(window, "localStorage", {
+//       //   value: localStorageMock,
+//       // });
+//       // window.localStorage.setItem(
+//       //   "user",
+//       //   JSON.stringify({
+//       //     type: "Employee",
+//       //   })
+//       // );
+
+//       const getSpy = jest.spyOn(mockStore, "bills");
+//       const bills = await mockStore.bills();
+//       expect(getSpy).toHaveBeenCalledTimes(1);
+//       expect(bills.data.length).toBe(4);
+
+
+//     });
+//   });
+// })
+
+//Error test
+describe("Given I am connected as Employee", () => {
+  describe("When an error append", () => {
+    beforeEach(() => {
+      jest.spyOn(mockStore, "bills")
+      Object.defineProperty(window, "localStorage", { value : localStorage})
+      window.localStorage.setItem("user", JSON.stringify({
+        type: "Employee",
+        email: "test@error",
+      })
+      )
+      const root = document.createElement("div");
+      root.setAttribute("id", "root");
+      document.body.append(root);
+      router(); 
+    })
+
+    test("Call error simulation", async () => {
+      mockStore.bills.mockImplementationOnce(() => {
+        return {
+          list : () => {
+            return Promise.reject(new Error("Erreur 404"))
+          }
+        }
+      })
+    });
+  })
+})
