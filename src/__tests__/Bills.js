@@ -77,8 +77,48 @@ describe("Given I am connected as an employee", () => {
       expect(screen.getByText("Envoyer une note de frais")); //Contrôle si la nouvelle note de frais est affichée
     });
   });
-});
 
-//handleClickIconEye
+  //handleClickIconEye
+  describe("Given I am connected as Employee and I am on Dashboard page and I clicked on a bill", () => {
+    describe("When I click on the icon eye", () => {
+      test("A modal should open", async () => {
+        Object.defineProperty(window, "localStorage", {
+          value: localStorageMock,
+        });
+        window.localStorage.setItem(
+          "user",
+          JSON.stringify({
+            type: "Employee",
+          })
+        );
+
+        const onNavigate = (pathname) => {
+          document.body.innerHTML = ROUTES({ pathname }); //Recupère l'url de l'employé
+        };
+
+        document.body.innerHTML = BillsUI({ data: bills });
+
+        const _bills = new Bills({
+          document,
+          onNavigate,
+          store: null,
+          localStorage: localStorageMock,
+        });
+
+        $.fn.modal = jest.fn();
+        const eye = screen.getAllByTestId("icon-eye")[0];
+        const handleClickIconEye = jest.fn(_bills.handleClickIconEye(eye));
+        eye.addEventListener("click", handleClickIconEye);
+        userEvent.click(eye);
+        expect(handleClickIconEye).toHaveBeenCalled();
+
+        const imageProof = document.querySelector(".bill-proof-container img");
+        expect(eye.getAttribute("data-bill-url")).toEqual(
+          imageProof.getAttribute("src")
+        );
+      });
+    });
+  });
+});
 
 //getBills(Date's format?)
