@@ -12,6 +12,7 @@ import Bills from "../containers/Bills.js";
 import mockStore from "../__mocks__/store";
 
 import router from "../app/Router.js";
+jest.mock("../app/store", () => mockStore);
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
@@ -94,10 +95,14 @@ describe("Given I am connected as an employee", () => {
         );
 
         const onNavigate = (pathname) => {
-          document.body.innerHTML = ROUTES({ pathname }); //Recupère l'url de l'employé
+          document.body.innerHTML = ROUTES({
+            pathname,
+          }); //Recupère l'url de l'employé
         };
 
-        document.body.innerHTML = BillsUI({ data: bills });
+        document.body.innerHTML = BillsUI({
+          data: bills,
+        }); //Recupère la façon d'afficher les notes de frais
 
         const _bills = new Bills({
           document,
@@ -123,54 +128,120 @@ describe("Given I am connected as an employee", () => {
 });
 
 //getBills
-// Describe("Given I am connected as Employee", () => {
-//   Describe("When I'm on Bills Page", () => {
-//     test("Then, all bills should be showed", async () => {
-//       // Object.defineProperty(window, "localStorage", {
-//       //   value: localStorageMock,
-//       // });
-//       // window.localStorage.setItem(
-//       //   "user",
-//       //   JSON.stringify({
-//       //     type: "Employee",
-//       //   })
-//       // );
+describe("Given I am connected", () => {
+  describe("When I am on the Bills page", () => {
+    test("Then I get no bills", () => {
+      const bills = new Bills({
+        store: null,
+        document,
+      });
+      expect(bills.getBills()).toBe(undefined);
+    });
+    test("Then I get bills", async () => {
+      const bills = new Bills({
+        store: mockStore,
+        document,
+      });
+      const billsCollected = await bills.getBills();
+      expect(billsCollected.length).toBe(4);
+    });
+  });
+});
 
-//       const getSpy = jest.spyOn(mockStore, "bills");
-//       const bills = await mockStore.bills();
-//       expect(getSpy).toHaveBeenCalledTimes(1);
-//       expect(bills.data.length).toBe(4);
+// test("Then, all bills should be showed", async () => {
+//   Object.defineProperty(window, "localStorage", {
+//           value: localStorageMock,
+//         });
+//         window.localStorage.setItem(
+//           "user",
+//           JSON.stringify({
+//             type: "Employee",
+//           })
+//         );
 
+//   const getSpy = jest.spyOn(mockStore, "bills");
+//   const bills = await mockStore.bills();
+//   expect(getSpy).toHaveBeenCalledTimes(1);
+//   expect(bills.data.length).toBe(4);
 
-//     });
-//   });
-// })
+// });
 
-//Error test
+//Test d'intégration
 describe("Given I am connected as Employee", () => {
-  describe("When an error append", () => {
-    beforeEach(() => {
-      jest.spyOn(mockStore, "bills")
-      Object.defineProperty(window, "localStorage", { value : localStorage})
-      window.localStorage.setItem("user", JSON.stringify({
-        type: "Employee",
-        email: "test@error",
-      })
-      )
+  describe("When I am on the Bills page", () => {
+    test("Then, all bills should be showed", () => {
+      Object.defineProperty(window, "localStorage", {
+        value: localStorageMock,
+      });
+      window.localStorage.setItem(
+        "user",
+        JSON.stringify({
+          type: "Employee",
+        })
+      );
       const root = document.createElement("div");
       root.setAttribute("id", "root");
       document.body.append(root);
-      router(); 
-    })
+      router();
+    });
+  });
 
-    test("Call error simulation", async () => {
+  describe("When an error append", () => {
+    beforeEach(() => {
+      jest.spyOn(mockStore, "bills");
+      Object.defineProperty(window, "localStorage", {
+        value: localStorageMock,
+      });
+      window.localStorage.setItem(
+        "user",
+        JSON.stringify({
+          type: "Employee",
+          email: "test@error",
+        })
+      );
+      const root = document.createElement("div");
+      root.setAttribute("id", "root");
+      document.body.append(root);
+      router();
+    });
+
+    test("Then call 404 message error simulation", async () => {
       mockStore.bills.mockImplementationOnce(() => {
         return {
-          list : () => {
-            return Promise.reject(new Error("Erreur 404"))
-          }
-        }
-      })
+          list: () => {
+            return Promise.reject(new Error("Erreur 404"));
+          },
+        };
+      });
+      window.onNavigate(ROUTES_PATH.Bills);
+      await new Promise(process.nextTick);
+      const message = await screen.getByText(/Erreur 404/);
+      expect(message).toBeTruthy();
     });
-  })
-})
+
+    test("Then call 500 message error simulation", async () => {
+      mockStore.bills.mockImplementationOnce(() => {
+        return {
+          list: () => {
+            return Promise.reject(new Error("Erreur 500"));
+          },
+        };
+      });
+
+      window.onNavigate(ROUTES_PATH.Bills);
+      await new Promise(process.nextTick);
+      const message = await screen.getByText(/Erreur 500/);
+      expect(message).toBeTruthy();
+    });
+  });
+});
+
+// describe("Test error", () => {
+//   test("Test description", async () => {
+//     jest.spyOn(date, "doc").mockImplementation(async () => {
+//       throw new Error("Corrupted data");
+//     });
+//     await expect(bills()).rejects.toThrowError();
+//     fs.doc.mockStore();
+//   });
+// });
