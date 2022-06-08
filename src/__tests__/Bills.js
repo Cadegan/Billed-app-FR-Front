@@ -61,22 +61,21 @@ describe("Given I am connected as an employee", () => {
         })
       );
       const onNavigate = (pathname) => {
-        document.body.innerHTML = ROUTES({ pathname }); //Recupère l'url de l'employé
+        document.body.innerHTML = ROUTES({
+          pathname,
+        }); //Recupère l'url de l'employé
       };
       const newBill = new Bills({
+        //Charge les paramères de Bills dans une constante
         document,
         onNavigate,
       });
-      const handleClickNewBill = jest.fn(
-        () =>
-          //jest.fn crée directement une fonction mock
-          newBill.handleClickNewBill
-      );
+      const handleClickNewBill = jest.fn(newBill.handleClickNewBill); //jest.fn crée directement une fonction mock et espionne son comportement
       const button = screen.getByTestId("btn-new-bill");
       button.addEventListener("click", handleClickNewBill);
       userEvent.click(button); //Simule le click de l'utilisateur et lance la fonction handleClickNewBill
       expect(handleClickNewBill).toHaveBeenCalled();
-      expect(screen.getByText("Envoyer une note de frais")); //Contrôle si la nouvelle note de frais est affichée
+      expect(screen.getByText("Envoyer une note de frais")).toBeTruthy; //Contrôle si la nouvelle note de frais est affichée
     });
   });
 
@@ -112,8 +111,8 @@ describe("Given I am connected as an employee", () => {
         });
 
         $.fn.modal = jest.fn();
-        const eye = screen.getAllByTestId("icon-eye")[0];
-        const handleClickIconEye = jest.fn(_bills.handleClickIconEye(eye));
+        const eye = screen.getAllByTestId("icon-eye")[0]; //Recupère l'icon-eye
+        const handleClickIconEye = jest.fn(_bills.handleClickIconEye(eye)); //Va créer et "espionner" la fonction handleClickIconEye
         eye.addEventListener("click", handleClickIconEye);
         userEvent.click(eye);
         expect(handleClickIconEye).toHaveBeenCalled();
@@ -143,33 +142,15 @@ describe("Given I am connected", () => {
         document,
       });
       const billsCollected = await bills.getBills();
-      expect(billsCollected.length).toBe(4);
+      expect(billsCollected).toHaveLength(4);
     });
   });
 });
 
-// test("Then, all bills should be showed", async () => {
-//   Object.defineProperty(window, "localStorage", {
-//           value: localStorageMock,
-//         });
-//         window.localStorage.setItem(
-//           "user",
-//           JSON.stringify({
-//             type: "Employee",
-//           })
-//         );
-
-//   const getSpy = jest.spyOn(mockStore, "bills");
-//   const bills = await mockStore.bills();
-//   expect(getSpy).toHaveBeenCalledTimes(1);
-//   expect(bills.data.length).toBe(4);
-
-// });
-
 //Test d'intégration
 describe("Given I am connected as Employee", () => {
   describe("When I am on the Bills page", () => {
-    test("Then, all bills should be showed", () => {
+    test("Then, all bills should be showed", async () => {
       Object.defineProperty(window, "localStorage", {
         value: localStorageMock,
       });
@@ -183,55 +164,59 @@ describe("Given I am connected as Employee", () => {
       root.setAttribute("id", "root");
       document.body.append(root);
       router();
-    });
-  });
 
-  describe("When an error append", () => {
-    beforeEach(() => {
-      jest.spyOn(mockStore, "bills");
-      Object.defineProperty(window, "localStorage", {
-        value: localStorageMock,
-      });
-      window.localStorage.setItem(
-        "user",
-        JSON.stringify({
-          type: "Employee",
-          email: "test@error",
-        })
-      );
-      const root = document.createElement("div");
-      root.setAttribute("id", "root");
-      document.body.append(root);
-      router();
+      const tbody = await waitFor(() => screen.getByTestId("tbody"));
+      expect(tbody).toBeTruthy();
+      expect(tbody.querySelectorAll("tr")).toHaveLength(4);
     });
 
-    test("Then call 404 message error simulation", async () => {
-      mockStore.bills.mockImplementationOnce(() => {
-        return {
-          list: () => {
-            return Promise.reject(new Error("Erreur 404"));
-          },
-        };
-      });
-      window.onNavigate(ROUTES_PATH.Bills);
-      await new Promise(process.nextTick);
-      const message = await screen.getByText(/Erreur 404/);
-      expect(message).toBeTruthy();
-    });
-
-    test("Then call 500 message error simulation", async () => {
-      mockStore.bills.mockImplementationOnce(() => {
-        return {
-          list: () => {
-            return Promise.reject(new Error("Erreur 500"));
-          },
-        };
+    describe("When an error append", () => {
+      beforeEach(() => {
+        jest.spyOn(mockStore, "bills");
+        Object.defineProperty(window, "localStorage", {
+          value: localStorageMock,
+        });
+        window.localStorage.setItem(
+          "user",
+          JSON.stringify({
+            type: "Employee",
+            email: "test@error",
+          })
+        );
+        const root = document.createElement("div");
+        root.setAttribute("id", "root");
+        document.body.append(root);
+        router();
       });
 
-      window.onNavigate(ROUTES_PATH.Bills);
-      await new Promise(process.nextTick);
-      const message = await screen.getByText(/Erreur 500/);
-      expect(message).toBeTruthy();
+      test("Then call 404 message error simulation", async () => {
+        mockStore.bills.mockImplementationOnce(() => {
+          return {
+            list: () => {
+              return Promise.reject(new Error("Erreur 404"));
+            },
+          };
+        });
+        window.onNavigate(ROUTES_PATH.Bills);
+        await new Promise(process.nextTick);
+        const message = await screen.getByText(/Erreur 404/);
+        expect(message).toBeTruthy();
+      });
+
+      test("Then call 500 message error simulation", async () => {
+        mockStore.bills.mockImplementationOnce(() => {
+          return {
+            list: () => {
+              return Promise.reject(new Error("Erreur 500"));
+            },
+          };
+        });
+
+        window.onNavigate(ROUTES_PATH.Bills);
+        await new Promise(process.nextTick);
+        const message = await screen.getByText(/Erreur 500/);
+        expect(message).toBeTruthy();
+      });
     });
   });
 });
