@@ -110,7 +110,7 @@ describe("Given I am connected as an employee", () => {
           localStorage: localStorageMock,
         });
 
-        $.fn.modal = jest.fn();
+        $.fn.modal = jest.fn(); //Pour Boostrap
         const eye = screen.getAllByTestId("icon-eye")[0]; //Recupère l'icon-eye
         const handleClickIconEye = jest.fn(_bills.handleClickIconEye(eye)); //Va créer et "espionner" la fonction handleClickIconEye
         eye.addEventListener("click", handleClickIconEye);

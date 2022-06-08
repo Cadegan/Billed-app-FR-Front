@@ -3,12 +3,12 @@
  * @jest-environment jsdom
  */
 
-import { screen } from "@testing-library/dom";
-import NewBillUI from "../views/NewBillUI.js";
-import NewBill from "../containers/NewBill.js";
+import { screen, waitFor } from "@testing-library/dom";
+/*import NewBillUI from "../views/NewBillUI.js";
+import NewBill from "../containers/NewBill.js";*/
 import mockStore from "../__mocks__/store.js";
 import { localStorageMock } from "../__mocks__/localStorage.js";
-import { ROUTES, ROUTES_PATH } from "../constants/routes.js";
+import { ROUTES_PATH } from "../constants/routes.js";
 import router from "../app/Router.js";
 
 jest.mock("../app/store", () => mockStore);
@@ -38,6 +38,7 @@ describe("Given I am connected as an employee", () => {
 });
 
 //handleChangeFile : Contrôle lors de l'upload et message d'erreur en cas de mauvais format
+// Describe("Given I am connected as an employee and upload a file", () => {});
 
 //handleSubmit : Affichage de la nouvelle note de frais
 
