@@ -4,11 +4,14 @@
  */
 
 import { screen, waitFor } from "@testing-library/dom";
-/*import NewBillUI from "../views/NewBillUI.js";
-import NewBill from "../containers/NewBill.js";*/
+import userEvent from "@testing-library/user-event";
+import Bills from "../containers/Bills.js";
+import { bills } from "../fixtures/bills.js";
+import NewBillUI from "../views/NewBillUI.js";
+import NewBill from "../containers/NewBill.js";
 import mockStore from "../__mocks__/store.js";
 import { localStorageMock } from "../__mocks__/localStorage.js";
-import { ROUTES_PATH } from "../constants/routes.js";
+import { ROUTES_PATH, ROUTES } from "../constants/routes.js";
 import router from "../app/Router.js";
 
 jest.mock("../app/store", () => mockStore);
@@ -34,11 +37,95 @@ describe("Given I am connected as an employee", () => {
       const windowIcon = screen.getByTestId("icon-mail");
       expect(windowIcon.className).toContain("active-icon");
     });
-  });
-});
 
-//handleChangeFile : Contrôle lors de l'upload et message d'erreur en cas de mauvais format
-// Describe("Given I am connected as an employee and upload a file", () => {});
+    test("Then the file is uploaded with good extension", async () => {
+      Object.defineProperty(window, "localStorage", {
+        value: localStorageMock,
+      });
+      window.localStorage.setItem(
+        "user",
+        JSON.stringify({
+          type: "Employee",
+        })
+      );
+
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({
+          pathname,
+        });
+      };
+
+      const html = NewBillUI();
+      document.body.innerHTML = html;
+
+      const newBill = new NewBill({
+        document,
+        onNavigate,
+        store: null,
+        localStorage: localStorageMock,
+      });
+
+      const file = new File(["goodFile.jpg"], "goodFile.jpg", {
+        type: "image/jpg",
+      });
+      const allowedExtension = /(\.jpg|\.jpeg|\.png)$/i;
+
+      const handleChangeFile = jest.fn(newBill.handleChangeFile);
+      const input = screen.getByTestId("file");
+      input.addEventListener("change", handleChangeFile);
+
+      userEvent.upload(input, file);
+      expect(handleChangeFile).toHaveBeenCalled();
+      expect(input.files[0].name).toBe("goodFile.jpg");
+      expect(input.files[0].name).toMatch(allowedExtension);
+    });
+    // });
+
+    test("Then the file is uploaded with wrong extension", async () => {
+      Object.defineProperty(window, "localStorage", {
+        value: localStorageMock,
+      });
+      window.localStorage.setItem(
+        "user",
+        JSON.stringify({
+          type: "Employee",
+        })
+      );
+
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({
+          pathname,
+        });
+      };
+
+      const html = NewBillUI();
+      document.body.innerHTML = html;
+
+      const newBill = new NewBill({
+        document,
+        onNavigate,
+        store: null,
+        localStorage: localStorageMock,
+      });
+
+      const file = new File(["badFile.pdf"], "badFile.pdf", {
+        type: "application/pdf",
+      });
+      const allowedExtension = /(\.jpg|\.jpeg|\.png)$/i;
+
+      const handleChangeFile = jest.fn(newBill.handleChangeFile);
+      const input = screen.getByTestId("file");
+      input.addEventListener("change", handleChangeFile);
+
+      userEvent.upload(input, file);
+      expect(handleChangeFile).toHaveBeenCalled();
+      expect(input.files[0].name).toBe("badFile.pdf");
+      expect(input.files[0].name).not.toMatch(allowedExtension);
+    });
+  });
+  //handleChangeFile : Contrôle lors de l'upload et message d'erreur en cas de mauvais format
+  // Describe("When I put a file with correct extension", () => {
+});
 
 //handleSubmit : Affichage de la nouvelle note de frais
 
