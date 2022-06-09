@@ -18,6 +18,7 @@ jest.mock("../app/store", () => mockStore);
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
+    //handleChangeFile : Contrôle lors de l'upload et message d'erreur en cas de mauvais format
     test("Then mail icon in vertical layout should be highlighted", async () => {
       Object.defineProperty(window, "localStorage", {
         value: localStorageMock,
@@ -122,11 +123,48 @@ describe("Given I am connected as an employee", () => {
       expect(input.files[0].name).toBe("badFile.pdf");
       expect(input.files[0].name).not.toMatch(allowedExtension);
     });
+
+    //handleSubmit : Affichage de la nouvelle note de frais
+    test("Then the sending of a NewBill is validated, the bill should be displayed", async () => {
+      Object.defineProperty(window, "localStorage", {
+        value: localStorageMock,
+      });
+      window.localStorage.setItem(
+        "user",
+        JSON.stringify({
+          type: "Employee",
+        })
+      );
+
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({
+          pathname,
+        });
+      };
+
+      const html = NewBillUI();
+      document.body.innerHTML = html;
+
+      const newBill = new NewBill({
+        document,
+        onNavigate,
+        store: null,
+        localStorage: localStorageMock,
+      });
+
+      const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
+
+      const btnSendBill = screen.getByTestId("form-new-bill");
+      btnSendBill.addEventListener("submit", handleSubmit);
+      userEvent.click(btnSendBill);
+
+      expect(handleSubmit).toHaveBeenCalled();
+  
+    });
   });
-  //handleChangeFile : Contrôle lors de l'upload et message d'erreur en cas de mauvais format
-  // Describe("When I put a file with correct extension", () => {
+
 });
 
-//handleSubmit : Affichage de la nouvelle note de frais
+
 
 //Test d'erreur
