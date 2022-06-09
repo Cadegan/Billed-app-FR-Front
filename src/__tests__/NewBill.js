@@ -3,10 +3,10 @@
  * @jest-environment jsdom
  */
 
-import { screen, waitFor } from "@testing-library/dom";
+import { screen, waitFor, fireEvent } from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
-import Bills from "../containers/Bills.js";
-import { bills } from "../fixtures/bills.js";
+// import Bills from "../containers/Bills.js";
+// import { bills } from "../fixtures/bills.js";
 import NewBillUI from "../views/NewBillUI.js";
 import NewBill from "../containers/NewBill.js";
 import mockStore from "../__mocks__/store.js";
@@ -153,12 +153,13 @@ describe("Given I am connected as an employee", () => {
       });
 
       const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
-
       const btnSendBill = screen.getByTestId("form-new-bill");
+      
       btnSendBill.addEventListener("submit", handleSubmit);
-      userEvent.click(btnSendBill);
+      fireEvent.submit(btnSendBill);
 
       expect(handleSubmit).toHaveBeenCalled();
+      // expect(screen.getByTestId())
   
     });
   });
