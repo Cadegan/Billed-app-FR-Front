@@ -16,9 +16,9 @@ import router from "../app/Router.js";
 
 jest.mock("../app/store", () => mockStore);
 
+
 describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
-    //handleChangeFile : Contrôle lors de l'upload et message d'erreur en cas de mauvais format
     test("Then mail icon in vertical layout should be highlighted", async () => {
       Object.defineProperty(window, "localStorage", {
         value: localStorageMock,
@@ -39,6 +39,8 @@ describe("Given I am connected as an employee", () => {
       expect(windowIcon.className).toContain("active-icon");
     });
 
+    //handleChangeFile
+    // Contrôle lors de l'upload et message d'erreur en cas de mauvais format
     test("Then the file is uploaded with good extension", async () => {
       Object.defineProperty(window, "localStorage", {
         value: localStorageMock,
@@ -80,7 +82,6 @@ describe("Given I am connected as an employee", () => {
       expect(input.files[0].name).toBe("goodFile.jpg");
       expect(input.files[0].name).toMatch(allowedExtension);
     });
-    // });
 
     test("Then the file is uploaded with wrong extension", async () => {
       Object.defineProperty(window, "localStorage", {
@@ -154,18 +155,15 @@ describe("Given I am connected as an employee", () => {
 
       const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
       const btnSendBill = screen.getByTestId("form-new-bill");
-      
+
       btnSendBill.addEventListener("submit", handleSubmit);
       fireEvent.submit(btnSendBill);
+      // userEvent.click(btnSendBill);
 
       expect(handleSubmit).toHaveBeenCalled();
       // expect(screen.getByTestId())
-  
     });
   });
-
 });
-
-
 
 //Test d'erreur
