@@ -82,6 +82,16 @@ describe("Given I am connected as an employee", () => {
       expect(input.files[0].name).toMatch(allowedExtension);
     });
 
+    test("Then the bill file should be created", async () => {
+      const billAdded = mockStore.bills().create();
+      const addBill = await billAdded.then((value) => {
+        return value;
+      });
+
+      expect(addBill.fileUrl).toEqual("https://localhost:3456/images/test.jpg");
+      expect(addBill.key).toEqual("1234");
+    });
+
     test("Then the file is uploaded with wrong extension", async () => {
       Object.defineProperty(window, "localStorage", {
         value: localStorageMock,
@@ -163,54 +173,18 @@ describe("Given I am connected as an employee", () => {
     });
 
     test("Then the sending of a NewBill is validated, the new bill should be created in API", async () => {
-      // const billDemo = {
-      //   id: "47qAXb6fIm2zOKkLzMro",
-      //   vat: "80",
-      //   fileUrl:
-      //     "https://firebasestorage.googleapis.com/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=c1640e12-a24b-4b11-ae52-529112e9602a",
-      //   status: "pending",
-      //   type: "Hôtel et logement",
-      //   commentary: "séminaire billed",
-      //   name: "encore",
-      //   fileName: "preview-facture-free-201801-pdf-1.jpg",
-      //   date: "2004-04-04",
-      //   amount: 400,
-      //   commentAdmin: "ok",
-      //   email: "a@a",
-      //   pct: 20,
-      // };
 
-      const updateBill = mockStore.bills().update();
-      const addBill = await updateBill.then((value) => {
+      const billUpdated = mockStore.bills().update();
+      const updateBill = await billUpdated.then((value) => {
         return value;
       });
 
-      expect(addBill.id).toBe("47qAXb6fIm2zOKkLzMro");
-      expect(addBill.fileUrl).toBe(
+      expect(updateBill.id).toBe("47qAXb6fIm2zOKkLzMro");
+      expect(updateBill.fileUrl).toBe(
         "https://firebasestorage.googleapis.com/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=c1640e12-a24b-4b11-ae52-529112e9602a"
       );
-      expect(addBill.fileName).toBe("preview-facture-free-201801-pdf-1.jpg")
-
-      // const mockedBills = mockStore.bills();
-      // const spyBillDemo = jest.spyOn(mockedBills, "update");
-      // const bills = await spyBillDemo(billDemo);
-      // const addBill = [...bills, billDemo];
-      // expect(spyBillDemo).toHaveBeenCalledTimes(1);
-      // expect(addBill.length).toBe(5);
-      // expect(addBill[4].name).toBe("preview-facture-free-201801-pdf-1.jpg")
-
-      // const mockedBills = mockStore.bills();
-      // const spyBillDemo = jest.spyOn(mockedBills, "update");
-
-      // const billUpdate = await spyBillDemo(billDemo);
-
-      // expect(billUpdate.id).toBe("47qAXb6fIm2zOKkLzMro");
-      // expect(billUpdate.fileUrl).toBe(
-      //   "https://firebasestorage.googleapis.com/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=c1640e12-a24b-4b11-ae52-529112e9602a"
-      // );
-      // expect(billUpdate.fileName).toBe("preview-facture-free-201801-pdf-1.jpg")
-    })
-
+      expect(updateBill.fileName).toBe("preview-facture-free-201801-pdf-1.jpg");
+    });
   });
 });
 
@@ -234,7 +208,6 @@ describe("Given I am connected as an employee", () => {
   });
 
   test("fetches messages from an API and fails with 500 message error", async () => {
-
     console.error = jest.fn();
     mockStore.bills.mockImplementationOnce(() => {
       return {
@@ -243,7 +216,7 @@ describe("Given I am connected as an employee", () => {
         },
       };
     });
-    
+
     window.onNavigate(ROUTES_PATH.NewBill);
 
     const newBill = new NewBill({
