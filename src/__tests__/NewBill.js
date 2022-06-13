@@ -16,7 +16,6 @@ import router from "../app/Router.js";
 
 jest.mock("../app/store", () => mockStore);
 
-
 describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
     test("Then mail icon in vertical layout should be highlighted", async () => {
@@ -167,3 +166,55 @@ describe("Given I am connected as an employee", () => {
 });
 
 //Test d'erreur
+describe("Given I am connected as an employee", () => {
+  beforeEach(() => {
+    jest.spyOn(mockStore, "bills");
+    Object.defineProperty(window, "localStorage", {
+      value: localStorageMock,
+    });
+    window.localStorage.setItem(
+      "user",
+      JSON.stringify({
+        type: "Employee",
+      })
+    );
+    const root = document.createElement("div");
+    root.setAttribute("id", "root");
+    document.body.append(root);
+    router();
+    
+  });
+
+  test("fetches messages from an API and fails with 500 message error", async () => {
+    jest.spyOn(mockStore, "bills");
+    console.error = jest.fn();
+
+   window.onNavigate(ROUTES_PATH.NewBill);
+
+    mockStore.bills.mockImplementationOnce(() => {
+      return {
+        update: () => {
+          return Promise.reject(new Error("Erreur 500"));
+        },
+      };
+    });
+    await new Promise(process.nextTick);
+    // const message = await screen.getByText(/Erreur 500/);
+    // expect(message).toBeTruthy();
+
+    const newBill = new NewBill({
+      document,
+      onNavigate,
+      store: null,
+      localStorage: localStorageMock,
+    });
+
+    const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
+      const btnSendBill = screen.getByTestId("form-new-bill");
+
+      btnSendBill.addEventListener("submit", handleSubmit);
+      fireEvent.submit(btnSendBill);
+      await new Promise(process.nextTick);
+      expect(console.error).toBeCalled();
+  });
+});
