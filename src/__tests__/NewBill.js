@@ -160,8 +160,57 @@ describe("Given I am connected as an employee", () => {
       // userEvent.click(btnSendBill);
 
       expect(handleSubmit).toHaveBeenCalled();
-      // expect(screen.getByTestId())
     });
+
+    test("Then the sending of a NewBill is validated, the new bill should be created in API", async () => {
+      // const billDemo = {
+      //   id: "47qAXb6fIm2zOKkLzMro",
+      //   vat: "80",
+      //   fileUrl:
+      //     "https://firebasestorage.googleapis.com/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=c1640e12-a24b-4b11-ae52-529112e9602a",
+      //   status: "pending",
+      //   type: "Hôtel et logement",
+      //   commentary: "séminaire billed",
+      //   name: "encore",
+      //   fileName: "preview-facture-free-201801-pdf-1.jpg",
+      //   date: "2004-04-04",
+      //   amount: 400,
+      //   commentAdmin: "ok",
+      //   email: "a@a",
+      //   pct: 20,
+      // };
+
+      const updateBill = mockStore.bills().update();
+      const addBill = await updateBill.then((value) => {
+        return value;
+      });
+
+      expect(addBill.id).toBe("47qAXb6fIm2zOKkLzMro");
+      expect(addBill.fileUrl).toBe(
+        "https://firebasestorage.googleapis.com/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=c1640e12-a24b-4b11-ae52-529112e9602a"
+      );
+      expect(addBill.fileName).toBe("preview-facture-free-201801-pdf-1.jpg")
+
+      // const mockedBills = mockStore.bills();
+      // const spyBillDemo = jest.spyOn(mockedBills, "update");
+      // const bills = await spyBillDemo(billDemo);
+      // const addBill = [...bills, billDemo];
+      // expect(spyBillDemo).toHaveBeenCalledTimes(1);
+      // expect(addBill.length).toBe(5);
+      // expect(addBill[4].name).toBe("preview-facture-free-201801-pdf-1.jpg")
+
+      // const mockedBills = mockStore.bills();
+      // const spyBillDemo = jest.spyOn(mockedBills, "update");
+
+      // const billUpdate = await spyBillDemo(billDemo);
+
+      // expect(billUpdate.id).toBe("47qAXb6fIm2zOKkLzMro");
+      // expect(billUpdate.fileUrl).toBe(
+      //   "https://firebasestorage.googleapis.com/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=c1640e12-a24b-4b11-ae52-529112e9602a"
+      // );
+      // expect(billUpdate.fileName).toBe("preview-facture-free-201801-pdf-1.jpg")
+    })
+
   });
 });
 
