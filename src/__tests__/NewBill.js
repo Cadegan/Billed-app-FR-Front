@@ -38,16 +38,16 @@ describe("Given I am connected as an employee", () => {
       expect(windowIcon.className).toContain("active-icon");
     });
 
-     test("Then it should render the NewBill Page", () => {
-       const NewBillPage = screen.getByText("Envoyer une note de frais");
-       expect(NewBillPage).toBeVisible();
+    test("Then it should render the NewBill Page", () => {
+      const NewBillPage = screen.getByText("Envoyer une note de frais");
+      expect(NewBillPage).toBeVisible();
 
-       const formNewBill = screen.getByTestId("form-new-bill");
-       expect(formNewBill).toBeVisible();
-     });
+      const formNewBill = screen.getByTestId("form-new-bill");
+      expect(formNewBill).toBeVisible();
+    });
 
     //handleChangeFile
-    // Contrôle lors de l'upload et message d'erreur en cas de mauvais format
+    // Contrôle lors de l'upload et le format du fichier
     test("Then the file is uploaded with good extension", async () => {
       Object.defineProperty(window, "localStorage", {
         value: localStorageMock,
@@ -132,45 +132,56 @@ describe("Given I am connected as an employee", () => {
       expect(input.files[0].name).not.toMatch(allowedExtension);
     });
 
-     test("Then the sending of a NewBill is validated, the new bill should be created in API", async () => {
+    //  test("Then the sending of a NewBill is validated, the new bill should be created in API", async () => {
 
-      jest.spyOn(mockStore, "bills");
-      const billsList = await mockStore.bills().list();
+    //   jest.spyOn(mockStore, "bills");
+    //   const billsList = await mockStore.bills().list();
 
-      expect(billsList.length).toBe(4);
+    //   expect(billsList.length).toBe(4);
 
-      let bill = {
-        email: "employee@tld.com",
-        type: "Transports",
-        name: "Bill test",
-        amount: "200",
-        date: "2022-06-14",
-        vat: "50",
-        pct: "20",
-        commentary: "Moked test",
-        fileUrl: "https://localhost:3456/images/test.jpg",
-        fileName: "test.jpg",
-        status: "pending",
-      };
+    //   let bill = {
+    //     email: "employee@tld.com",
+    //     type: "Transports",
+    //     name: "Bill test",
+    //     amount: "200",
+    //     date: "2022-06-14",
+    //     vat: "50",
+    //     pct: "20",
+    //     commentary: "Moked test",
+    //     fileUrl: "https://localhost:3456/images/test.jpg",
+    //     fileName: "test.jpg",
+    //     status: "pending",
+    //   };
 
-      mockStore.bills().create(bill);
-      waitFor(() => expect(billsList.length).toBe(5));
-     });
+    //   mockStore.bills().create(bill);
+    //   await waitFor(() => expect(billsList.length).toBe(5));
+    //  });
 
-      // test("Then the sending of a NewBill is validated, the new bill should be created in API", async () => {
-      //   const billUpdated = mockStore.bills().update();
-      //   const updateBill = await billUpdated.then((value) => {
-      //     return value;
-      //   });
+    test("Then the sending of a NewBill is validated, the new bill should be updated in API", async () => {
+      const billCreated = mockStore.bills().update();
+      const createBill = await billCreated.then((value) => {
+        return value;
+      });
 
-      //   expect(updateBill.id).toBe("47qAXb6fIm2zOKkLzMro");
-      //   expect(updateBill.fileUrl).toBe(
-      //     "https://firebasestorage.googleapis.com/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=c1640e12-a24b-4b11-ae52-529112e9602a"
-      //   );
-      //   expect(updateBill.fileName).toBe(
-      //     "preview-facture-free-201801-pdf-1.jpg"
-      //   );
-      // });
+      expect(createBill.id).toBe("47qAXb6fIm2zOKkLzMro");
+      expect(createBill.fileUrl).toBe(
+        "https://firebasestorage.googleapis.com/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=c1640e12-a24b-4b11-ae52-529112e9602a"
+      );
+      expect(createBill.fileName).toBe("preview-facture-free-201801-pdf-1.jpg");
+      expect(createBill.key).toBeUndefined;
+    });
+
+    test("Then the sending of a NewBill is validated, the new bill should be created in API", async () => {
+      const billUpdated = mockStore.bills().create();
+      const updateBill = await billUpdated.then((value) => {
+        return value;
+      });
+
+      expect(updateBill.id).toBeUndefined;
+      expect(updateBill.fileUrl).toBe("https://localhost:3456/images/test.jpg");
+      expect(updateBill.fileName).toBeUndefined;
+      expect(updateBill.key).toBe("1234");
+    });
 
     //handleSubmit : Affichage de la nouvelle note de frais
     test("Then the sending of a NewBill is validated, the bill should be displayed", async () => {
@@ -215,9 +226,11 @@ describe("Given I am connected as an employee", () => {
 });
 
 //Test d'erreur
-describe("Given I am connected as an employee", () => {
-  beforeEach(() => {
+describe("When an error occurs on API", () => {
+  test("fetches messages from an API and fails with 500 message error", async () => {
     jest.spyOn(mockStore, "bills");
+    console.error = jest.fn();
+
     Object.defineProperty(window, "localStorage", {
       value: localStorageMock,
     });
@@ -231,10 +244,9 @@ describe("Given I am connected as an employee", () => {
     root.setAttribute("id", "root");
     document.body.append(root);
     router();
-  });
 
-  test("fetches messages from an API and fails with 500 message error", async () => {
-    console.error = jest.fn();
+    window.onNavigate(ROUTES_PATH.NewBill);
+
     mockStore.bills.mockImplementationOnce(() => {
       return {
         update: () => {
@@ -243,20 +255,18 @@ describe("Given I am connected as an employee", () => {
       };
     });
 
-    window.onNavigate(ROUTES_PATH.NewBill);
-
     const newBill = new NewBill({
       document,
       onNavigate,
-      store: null,
+      store: mockStore,
       localStorage: localStorageMock,
     });
 
     const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
-    const btnSendBill = screen.getByTestId("form-new-bill");
+    const btnSubmitBill = screen.getByTestId("form-new-bill");
 
-    btnSendBill.addEventListener("submit", handleSubmit);
-    fireEvent.submit(btnSendBill);
+    btnSubmitBill.addEventListener("submit", handleSubmit);
+    fireEvent.submit(btnSubmitBill);
     await new Promise(process.nextTick);
     expect(console.error).toBeCalled();
   });
