@@ -21,18 +21,18 @@ export default class NewBill {
     e.preventDefault();
     const file = this.document.querySelector("input[data-testid=\"file\"]")
       .files[0];
-    const filePath = e.target.value.split(/\\/g);
-    const fileName = filePath[filePath.length - 1];
-    const allowedExtension = /(\.jpg|\.jpeg|\.png)$/i;
+    
+    const allowedExtension = ["image/jpeg", "image/jpg", "image/png"];
+    const isGoodFormat = allowedExtension.includes(file.type);
 
-    const formData = new FormData();
-    const email = JSON.parse(localStorage.getItem("user")).email;
-    formData.append("file", file);
-    formData.append("email", email);
+    if (isGoodFormat) {
+      const filePath = e.target.value.split(/\\/g);
+      const fileName = filePath[filePath.length - 1];
+      const formData = new FormData();
+      const email = JSON.parse(localStorage.getItem("user")).email;
+      formData.append("file", file);
+      formData.append("email", email);
 
-    if (!allowedExtension.test(fileName)) {
-      alert("Format non supporté. Utilisez des .jpg, .jpeg, .png");
-    } else {
       this.store
         .bills()
         .create({
@@ -48,8 +48,10 @@ export default class NewBill {
           this.fileName = fileName;
         })
         .catch((error) => console.error(error));
+    } else {
+      alert("Format non supporté. Utilisez des .jpg, .jpeg, .png");
+      e.target.value = "";
     }
-    console.log("Extention valide ?", allowedExtension.test(fileName));
   };
 
   handleSubmit = (e) => {
