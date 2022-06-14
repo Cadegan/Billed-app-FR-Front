@@ -75,6 +75,8 @@ describe("Given I am connected as an employee", () => {
       button.addEventListener("click", handleClickNewBill);
       userEvent.click(button); //Simule le click de l'utilisateur et lance la fonction handleClickNewBill
       expect(handleClickNewBill).toHaveBeenCalled();
+      const modal = screen.getAllByTestId("form-new-bill");
+      expect(modal).toBeTruthy(); //
       expect(screen.getByText("Envoyer une note de frais")).toBeTruthy; //Contrôle si la nouvelle note de frais est affichée
     });
   });

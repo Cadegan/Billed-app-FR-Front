@@ -2,7 +2,7 @@
 /**
  * @jest-environment jsdom
  */
-
+import "@testing-library/jest-dom/extend-expect";
 import { screen, waitFor, fireEvent } from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 // import Bills from "../containers/Bills.js";
@@ -37,6 +37,14 @@ describe("Given I am connected as an employee", () => {
       const windowIcon = screen.getByTestId("icon-mail");
       expect(windowIcon.className).toContain("active-icon");
     });
+
+     test("Then it should render the NewBill Page", () => {
+       const NewBillPage = screen.getByText("Envoyer une note de frais");
+       expect(NewBillPage).toBeVisible();
+
+       const formNewBill = screen.getByTestId("form-new-bill");
+       expect(formNewBill).toBeVisible();
+     });
 
     //handleChangeFile
     // Contrôle lors de l'upload et message d'erreur en cas de mauvais format
@@ -82,16 +90,6 @@ describe("Given I am connected as an employee", () => {
       expect(input.files[0].name).toMatch(allowedExtension);
     });
 
-    test("Then the bill file should be created", async () => {
-      const billAdded = mockStore.bills().create();
-      const addBill = await billAdded.then((value) => {
-        return value;
-      });
-
-      expect(addBill.fileUrl).toEqual("https://localhost:3456/images/test.jpg");
-      expect(addBill.key).toEqual("1234");
-    });
-
     test("Then the file is uploaded with wrong extension", async () => {
       Object.defineProperty(window, "localStorage", {
         value: localStorageMock,
@@ -134,6 +132,46 @@ describe("Given I am connected as an employee", () => {
       expect(input.files[0].name).not.toMatch(allowedExtension);
     });
 
+     test("Then the sending of a NewBill is validated, the new bill should be created in API", async () => {
+
+      jest.spyOn(mockStore, "bills");
+      const billsList = await mockStore.bills().list();
+
+      expect(billsList.length).toBe(4);
+
+      let bill = {
+        email: "employee@tld.com",
+        type: "Transports",
+        name: "Bill test",
+        amount: "200",
+        date: "2022-06-14",
+        vat: "50",
+        pct: "20",
+        commentary: "Moked test",
+        fileUrl: "https://localhost:3456/images/test.jpg",
+        fileName: "test.jpg",
+        status: "pending",
+      };
+
+      mockStore.bills().create(bill);
+      waitFor(() => expect(billsList.length).toBe(5));
+     });
+
+      // test("Then the sending of a NewBill is validated, the new bill should be created in API", async () => {
+      //   const billUpdated = mockStore.bills().update();
+      //   const updateBill = await billUpdated.then((value) => {
+      //     return value;
+      //   });
+
+      //   expect(updateBill.id).toBe("47qAXb6fIm2zOKkLzMro");
+      //   expect(updateBill.fileUrl).toBe(
+      //     "https://firebasestorage.googleapis.com/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=c1640e12-a24b-4b11-ae52-529112e9602a"
+      //   );
+      //   expect(updateBill.fileName).toBe(
+      //     "preview-facture-free-201801-pdf-1.jpg"
+      //   );
+      // });
+
     //handleSubmit : Affichage de la nouvelle note de frais
     test("Then the sending of a NewBill is validated, the bill should be displayed", async () => {
       Object.defineProperty(window, "localStorage", {
@@ -170,20 +208,8 @@ describe("Given I am connected as an employee", () => {
       // userEvent.click(btnSendBill);
 
       expect(handleSubmit).toHaveBeenCalled();
-    });
-
-    test("Then the sending of a NewBill is validated, the new bill should be created in API", async () => {
-
-      const billUpdated = mockStore.bills().update();
-      const updateBill = await billUpdated.then((value) => {
-        return value;
-      });
-
-      expect(updateBill.id).toBe("47qAXb6fIm2zOKkLzMro");
-      expect(updateBill.fileUrl).toBe(
-        "https://firebasestorage.googleapis.com/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=c1640e12-a24b-4b11-ae52-529112e9602a"
-      );
-      expect(updateBill.fileName).toBe("preview-facture-free-201801-pdf-1.jpg");
+      expect(screen.getByTestId("btn-new-bill")).toBeVisible();
+      expect(screen.getByText("Mes notes de frais")).toBeVisible();
     });
   });
 });
