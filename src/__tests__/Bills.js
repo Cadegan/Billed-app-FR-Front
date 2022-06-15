@@ -222,13 +222,3 @@ describe("Given I am connected as Employee", () => {
     });
   });
 });
-
-// describe("Test error", () => {
-//   test("Test description", async () => {
-//     jest.spyOn(date, "doc").mockImplementation(async () => {
-//       throw new Error("Corrupted data");
-//     });
-//     await expect(bills()).rejects.toThrowError();
-//     fs.doc.mockStore();
-//   });
-// });

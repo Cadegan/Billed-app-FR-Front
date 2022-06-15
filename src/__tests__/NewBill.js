@@ -154,7 +154,7 @@ describe("Given I am connected as an employee", () => {
     });
 
     //handleSubmit : Affichage de la nouvelle note de frais
-    test("Then the sending of a NewBill is validated, the bill should be displayed", async () => {
+    test("Then the sending of a NewBill is validated, the new bill should be displayed", async () => {
 
       const html = NewBillUI();
       document.body.innerHTML = html;
