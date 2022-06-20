@@ -102,31 +102,7 @@ describe("Given I am connected as an employee", () => {
        expect(input.files[0].name).not.toMatch(allowedExtension);
     });
 
-    //  test("Then the sending of a NewBill is validated, the new bill should be created in API", async () => {
-
-    //   jest.spyOn(mockStore, "bills");
-    //   const billsList = await mockStore.bills().list();
-
-    //   expect(billsList.length).toBe(4);
-
-    //   let bill = {
-    //     email: "employee@tld.com",
-    //     type: "Transports",
-    //     name: "Bill test",
-    //     amount: "200",
-    //     date: "2022-06-14",
-    //     vat: "50",
-    //     pct: "20",
-    //     commentary: "Moked test",
-    //     fileUrl: "https://localhost:3456/images/test.jpg",
-    //     fileName: "test.jpg",
-    //     status: "pending",
-    //   };
-
-    //   mockStore.bills().create(bill);
-    //   await waitFor(() => expect(billsList.length).toBe(5));
-    //  });
-
+    
     test("Then the sending of a NewBill is validated, the new bill should be updated in API", async () => {
       const billCreated = mockStore.bills().update();
       const createBill = await billCreated.then((value) => {

@@ -155,7 +155,7 @@ export default class {
     }
 
     bills.forEach((bill) => {
-      $(`#open-bill${bill.id}`, `#status-bills-container${this.index}`).click(//Verifie si une facture n'est pas déjà affichée
+      $(`#open-bill${bill.id}`, `#status-bills-container${this.index}`).click(//Verifie si une facture et son contenaire ne sont pas déjà affichés
         (e) => this.handleEditTicket(e, bill, bills)
       );
     });
