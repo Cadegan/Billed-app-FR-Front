@@ -56,7 +56,7 @@ export default class Login {
         "input[data-testid=\"admin-password-input\"]"
       ).value,
       status: "connected",
-    };
+    }; // data-testid="employee-password-input" => data-testid="admin-email-input"
     this.localStorage.setItem("user", JSON.stringify(user));
     this.login(user)
       .catch((err) => this.createUser(user))

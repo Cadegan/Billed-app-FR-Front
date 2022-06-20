@@ -11,7 +11,7 @@ const row = (bill) => {
       <td>${bill.name}</td>
       <td>${
         Object.prototype.hasOwnProperty.call(bill, "formatDate")
-          ? bill.formatDate
+          ? bill.formatDate //Affiche les dates formatées
           : bill.date
       }</td>
       <td>${bill.amount} €</td>
@@ -21,11 +21,11 @@ const row = (bill) => {
       </td>
     </tr>
     `;
-};
+}; 
 
-const isDateValidated = (bill) => (bill.date === null ? false : true);
+const isDateValidated = (bill) => (bill.date === null ? false : true); //Détermine si une date est nulle ou pas
 
-const antiChrono = (a, b) => {
+const antiChrono = (a, b) => { // Ajout d'une fonction de tri en selon le format des dates
   const aDate = Object.prototype.hasOwnProperty.call(a, "formatIso")
     ? a.formatIso
     : a.date;
@@ -36,7 +36,7 @@ const antiChrono = (a, b) => {
   return aDate < bDate ? 1 : -1;
 };
 
-const rows = (data) => {
+const rows = (data) => {//Filtre les dates validées dans un tableau classé par odre chronologique
   if (data && data.length) {
     const billsAntiChronoSorted = data.filter(isDateValidated).sort(antiChrono);
     return billsAntiChronoSorted.map((bill) => row(bill)).join("");

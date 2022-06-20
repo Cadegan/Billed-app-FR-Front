@@ -22,10 +22,10 @@ export default class NewBill {
     const file = this.document.querySelector("input[data-testid=\"file\"]")
       .files[0];
     
-    const allowedExtension = ["image/jpeg", "image/jpg", "image/png"];
-    const isGoodFormat = allowedExtension.includes(file.type);
+    const allowedExtension = ["image/jpeg", "image/jpg", "image/png"]; //Formats autorisés
+    const isGoodFormat = allowedExtension.includes(file.type); //Vérifie si le format du fichier est bon
 
-    if (isGoodFormat) {
+    if (isGoodFormat) { //Si le format est bon
       const filePath = e.target.value.split(/\\/g);
       const fileName = filePath[filePath.length - 1];
       const formData = new FormData();
@@ -48,7 +48,7 @@ export default class NewBill {
           this.fileName = fileName;
         })
         .catch((error) => console.error(error));
-    } else {
+    } else { //Sinon
       alert("Format non supporté. Utilisez des .jpg, .jpeg, .png");
       e.target.value = "";
     }
